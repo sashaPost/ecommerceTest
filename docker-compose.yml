@@ -1,0 +1,32 @@
+
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    env_file:
+      - .env
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'ecommerce'
+      MYSQL_USER: 'ecommerce_user'
+      MYSQL_PASSWORD: 'changeme'
+      MYSQL_ROOT_PASSWORD: 'changeme'
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+volumes:
+  db_data:
